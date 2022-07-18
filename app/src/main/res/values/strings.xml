@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Twenty Four</string>
+    <string-array name="digits">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+    <string name="digit_1_input_name">Digit 1</string>
+    <string name="digit_2_input_name">Digit 2</string>
+    <string name="digit_3_input_name">Digit 3</string>
+    <string name="digit_4_input_name">Digit 4</string>
+    <string name="solution_label">Solutions:</string>
+    <string name="textview" />
+</resources>
