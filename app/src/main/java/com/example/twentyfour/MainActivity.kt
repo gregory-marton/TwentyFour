@@ -1,6 +1,7 @@
 package com.example.twentyfour
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -110,15 +111,14 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         "Δ√" to 4,
     )
 
-    fun bfs(values: Collection<Int>, desired: Int = 5, maxdepth:Int = 5) {
+    fun bfs(target:Int, values: Collection<Int>, desired: Int = 5, maxdepth:Int = 5) : List<List<String>> {
         // Queue contains a Pair<history, values> in which
         //   history is the set of operations already applied, and
         //   values is the set of values remaining to be used.
         val queue = ArrayDeque<Pair<List<String>, Collection<Int>>>()
-        val empty_history = List<String>(0)
-        queue.add(Pair(empty_history, values))
-        val limit = maxdepth
-        val solutions = Array<List<String>>()
+        queue.add(Pair(listOf(""), values))
+        var limit = maxdepth
+        val solutions = mutableListOf<List<String>>()
         while (queue.isNotEmpty()) {
             val (history, remaining) = queue.removeFirst()
             if ((history.size > limit) || (solutions.size >= desired)) break
@@ -126,21 +126,53 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 for ((i, a) in remaining.withIndex()) {
                     for ((j, b) in remaining.withIndex()) {
                         if (j != i) {
-                            val rest : Collection<Int> = remaining.minus(a).minus(b)
+                            val rest = remaining.minus(a).minus(b)
                             for ((name, fn) in binary_operations.entries) {
-                                val result = fn(a, b)
-                                if (result)
-                                    queue.addLast(Pair<List<String>,List<Int>>(
-                                        history.plus("$a $name $b"), rest))
+                                val result : Int? = fn(a, b)
+                                if (result != null) {
+                                    /*
+                                    Log.d(
+                                        "D24",
+                                        "binop $name on $a and $b => $result, keeping $rest"
+                                    )
+                                    */
+                                    queue.addLast(
+                                        Pair<List<String>, Collection<Int>>(
+                                            history.plus("$a$name$b=>$result"), rest.plus(result)
+                                        )
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
+            for (a in remaining) {
+                val rest : Collection<Int> = remaining.minus(a)
+                for ((name, fn) in unary_operations.entries) {
+                    val result :Int? = fn(a)
+                    if (result != null) {
+                        //Log.d("D24", "uniop $name on $a => $result, keeping $rest")
+                        queue.addLast(Pair<List<String>, Collection<Int>>(
+                            history.plus("$name$a=>$result"), rest.plus(result)))
+                    }
+                }
+            }
+            if (remaining.size == 1) {
+                if (remaining.first() == target) {
+                    Log.d("D24", "Found! ${history.joinToString("  ")}")
+                    solutions.add(history)
+                }
+                if (limit == maxdepth && history.size < maxdepth) {
+                    limit = history.size + 1
+                }
+            }
         }
+        return solutions
     }
 
     fun solve(values: Collection<Int>):String {
-        return values.sum().toString()
+        if (values.sum() == 0) return "Ready!"
+        return bfs(24, values).map({hist -> hist.joinToString("  ")}).joinToString("\n")
     }
 }
