@@ -18,6 +18,14 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private val digitValues = mutableMapOf<Int, Int>()
 
+    fun shuffle():Unit {
+        DIGIT_IDS.forEach { spinner_id ->
+            val spinner: Spinner = findViewById(spinner_id)
+            digitValues[spinner_id] = (0..spinner.getAdapter().count).random()
+            spinner.setSelection(digitValues[spinner_id]!!)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,6 +46,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 spinner.onItemSelectedListener = this
             }
         }
+        shuffle()
     }
 
     override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
@@ -111,7 +120,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         "Δ√" to 4,
     )
 
-    fun bfs(target:Int, values: Collection<Int>, desired: Int = 5, maxdepth:Int = 5) : List<List<String>> {
+    fun bfs(target:Int, values: Collection<Int>, desired: Int = 5, maxdepth:Int = 4) : List<List<String>> {
         // Queue contains a Pair<history, values> in which
         //   history is the set of operations already applied, and
         //   values is the set of values remaining to be used.
@@ -133,7 +142,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                                     /*
                                     Log.d(
                                         "D24",
-                                        "binop $name on $a and $b => $result, keeping $rest"
+                                        "${history.size} binop $name on $a and $b => $result, keeping $rest"
                                     )
                                     */
                                     queue.addLast(
