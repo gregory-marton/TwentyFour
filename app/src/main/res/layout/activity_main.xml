@@ -1,103 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <Spinner
-        android:id="@+id/digit1"
-        style="@android:style/Widget.Spinner.DropDown"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="40dp"
-        android:contentDescription="@string/digit_1_input_name"
-        android:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Spinner
-        android:id="@+id/digit2"
-        style="@android:style/Widget.Spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginEnd="40dp"
-        android:contentDescription="@string/digit_2_input_name"
-        app:layout_constraintBottom_toBottomOf="@+id/digit1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/digit1" />
-
-    <Spinner
-        android:id="@+id/digit3"
-        style="@android:style/Widget.Spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_marginTop="40dp"
-        android:contentDescription="@string/digit_3_input_name"
-        app:layout_constraintEnd_toEndOf="@+id/digit1"
-        app:layout_constraintStart_toStartOf="@+id/digit1"
-        app:layout_constraintTop_toBottomOf="@+id/digit1" />
-
-    <Spinner
-        android:id="@+id/digit4"
-        style="@android:style/Widget.Spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:contentDescription="@string/digit_4_input_name"
-        app:layout_constraintBottom_toBottomOf="@+id/digit3"
-        app:layout_constraintEnd_toEndOf="@+id/digit2"
-        app:layout_constraintStart_toStartOf="@+id/digit2"
-        app:layout_constraintTop_toTopOf="@+id/digit3" />
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
-        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="40dp"
-        android:contentDescription="@string/solution_label"
-        android:text="@string/solution_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/digit3" />
+        android:text="Target: 24"
+        android:textSize="24sp"
+        android:layout_marginBottom="16dp"/>
 
-    <TextView
-        android:id="@+id/solution_content"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/digitsInput"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/textview"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        android:hint="Enter digits (e.g., 1234)"
+        android:inputType="number"
+        android:maxLength="4"/>
 
     <Button
-        android:id="@+id/button2"
-        style="@style/Widget.Material3.Button.TextButton"
-        android:layout_width="wrap_content"
+        android:id="@+id/solveButton"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="Random Values"
-        android:onClick="shuffle"
-        android:text="🔀"
-        app:layout_constraintBottom_toBottomOf="@+id/digit2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/digit2" />
+        android:text="Solve"
+        android:layout_marginTop="16dp"/>
 
-    <Button
-        android:id="@+id/button3"
-        style="@style/Widget.Material3.Button.TextButton"
-        android:layout_width="wrap_content"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/solutionsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"/>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="Random Values"
-        android:onClick="solveAndDisplay"
-        android:text="✓"
-        app:layout_constraintBottom_toBottomOf="@+id/digit4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/digit4" />
+        android:orientation="vertical"
+        android:layout_marginTop="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <CheckBox
+            android:id="@+id/factorialsCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Factorials"/>
+
+        <CheckBox
+            android:id="@+id/trianglesCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Triangular Numbers"/>
+
+        <CheckBox
+            android:id="@+id/squaresCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Square Numbers"/>
+    </LinearLayout>
+
+</LinearLayout>
