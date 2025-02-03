@@ -127,12 +127,12 @@ class NumberSolver {
 
                     // Try reverse order for non-commutative operations
                     if (op in listOf("-", "/")) {
-                        val result = applyOperation(b, a, op)
-                        if (result != null) {
-                            remainingNumbers.add(result)
+                        val nonCommutativeResult = applyOperation(b, a, op)
+                        if (nonCommutativeResult != null) {
+                            remainingNumbers.add(nonCommutativeResult)
                             findSolutionsRecursive(
                                 remainingNumbers,
-                                "$steps $b$op$a=>$result",
+                                "$steps $b$op$a=>$nonCommutativeResult",
                                 solutions,
                                 30)
                             remainingNumbers.removeAt(remainingNumbers.lastIndex)
