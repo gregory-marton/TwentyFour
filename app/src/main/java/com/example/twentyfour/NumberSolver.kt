@@ -134,7 +134,7 @@ class NumberSolver {
                                 remainingNumbers,
                                 "$steps $b$op$a=>$result",
                                 solutions,
-                                100)
+                                30)
                             remainingNumbers.removeAt(remainingNumbers.lastIndex)
                         }
                     }
