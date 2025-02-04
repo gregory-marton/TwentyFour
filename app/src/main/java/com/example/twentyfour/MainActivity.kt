@@ -1,14 +1,22 @@
 package com.example.twentyfour
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.CheckBox
 import android.widget.Toast
-import android.util.Log
-import kotlinx.coroutines.*
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     private lateinit var digitsInput: EditText
@@ -20,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
     private val solver = NumberSolver()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
+    private var calculationJob: Job? = null // Keep track of the calculation job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +52,14 @@ class MainActivity : AppCompatActivity() {
                 }
                 solve(digits)
             }
+
+            // Make solutionsText clickable
+            solutionsText.isClickable = true
+            solutionsText.setOnClickListener {
+                if (calculationJob?.isActive == true) {
+                    showCancelDialog()
+                }
+            }
         } catch (e: Exception) {
             Log.e("MainActivity", "Error in onCreate", e)
             Toast.makeText(this, "Error initializing app: ${e.message}", Toast.LENGTH_LONG).show()
@@ -50,11 +67,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun solve(digits: String) {
-        coroutineScope.launch(Dispatchers.Main + CoroutineExceptionHandler { _, throwable ->
+        // Cancel any existing job
+        calculationJob?.cancel()
+
+        calculationJob = coroutineScope.launch(Dispatchers.Main + CoroutineExceptionHandler { _, throwable ->
             Log.e("MainActivity", "Error in solve coroutine", throwable)
             solutionsText.text = "Error: ${throwable.message}"
             Toast.makeText(this, "Error solving: ${throwable.message}", Toast.LENGTH_LONG).show()
-            solveButton.isEnabled = true
+            resetUI() // Reset UI on error
         }) {
             try {
                 solveButton.isEnabled = false
@@ -89,12 +109,32 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             } catch (e: Exception) {
-                Log.e("MainActivity", "Error in solve function", e)
-                Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                if (e is CancellationException) {
+                    Log.i("MainActivity", "Calculation cancelled")
+                } else {
+                    Log.e("MainActivity", "Error in solve function", e)
+                    Toast.makeText(this@MainActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                }
             } finally {
-                solveButton.isEnabled = true
+                resetUI() // Reset UI after calculation (success or cancellation)
             }
         }
+    }
+
+    private fun showCancelDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Cancel Calculation")
+            .setMessage("Are you sure you want to cancel the current calculation?")
+            .setPositiveButton("Yes") { _, _ ->
+                calculationJob?.cancel()
+            }
+            .setNegativeButton("No", null)
+            .show()
+    }
+
+    private fun resetUI() {
+        solveButton.isEnabled = true
+        solutionsText.text = "" // Clear the "Calculating..." or "Calculation cancelled" message
     }
 
     override fun onDestroy() {

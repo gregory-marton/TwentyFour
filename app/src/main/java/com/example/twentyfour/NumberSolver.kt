@@ -1,7 +1,14 @@
 package com.example.twentyfour
 
-import kotlin.math.sqrt
+//import kotlinx.coroutines.yield
+
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
 import kotlin.math.floor
+import kotlin.math.sqrt
 
 class NumberSolver {
     var useFactorials = true
@@ -9,6 +16,7 @@ class NumberSolver {
     var useSquares = false
 
     private val target = 24
+    private lateinit var job: Job
 
     private fun factorial(n: Int): Int? {
         return when {
@@ -79,7 +87,9 @@ class NumberSolver {
 
     fun findSolutions(numbers: List<Int>): List<String> {
         val solutions = mutableListOf<String>()
-        findSolutionsRecursive(numbers.toMutableList(), "", solutions, 0)
+        this.job = CoroutineScope(Dispatchers.Default).launch {
+            findSolutionsRecursive(numbers.toMutableList(), "", solutions, 0)
+        }
         return solutions.take(3)  // Return top 3 solutions
     }
 
@@ -91,6 +101,7 @@ class NumberSolver {
         solutions: MutableList<String>,
         depth: Int
     ) {
+        this.job.ensureActive()
         if (depth > MAX_DEPTH) return  // Prevent stack overflow
         if (solutions.size >= 3) return  // Limit to 3 solutions
 
